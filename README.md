@@ -1,4 +1,4 @@
-# InstagramLive-PHP
+# InstagramLive-PHP [![Build Status](https://travis-ci.org/JRoy/InstagramLive-PHP.svg?branch=master)](https://travis-ci.org/JRoy/InstagramLive-PHP)
 A PHP script that allows for you to go live on Instagram with any streaming program that supports RTMP!
 
 # Note
