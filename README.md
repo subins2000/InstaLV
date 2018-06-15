@@ -17,6 +17,9 @@ If you are running this after the first setup, work from step six on...
 6. Run the `goLive.php` script. (`php -f goLive.php`)
 7. Copy you Stream-URL and Stream-Key and paste them into your streaming software. [See OBS-Setup](https://github.com/JRoy/InstagramLive-PHP#obs-setup)
 
+#### Video Tutorial
+If you'd like a video version of this tutorial, see [this video](https://www.youtube.com/watch?v=mZfzFNZSuQc).
+
 # OBS-Setup
 1. Go to the "Stream" section of your OBS Settings 
 2. Set "Stream Type" to "Custom Streaming Server"
