@@ -39,6 +39,10 @@ try {
         $ig->finishTwoFactorLogin(IG_USERNAME, IG_PASS, $twoFactorIdentifier, $verificationCode);
     }
 } catch (\Exception $e) {
+    if (strpos($e->getMessage(), "Challenge") !== false) {
+        logM("Account Flagged: Please sign out of all phones and attempt to login to instagram.com from this computer before trying again!");
+        exit();
+    }
     echo 'Error While Logging in to Instagram: '.$e->getMessage()."\n";
     exit(0);
 }
