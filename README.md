@@ -14,7 +14,7 @@ If you are running this after the first setup, work from step six on...
 1. Install PHP, of course...
 2. [Install Composer](https://getcomposer.org/download/)
 3. Clone the Repository
-4. Run ```composer require mgp25/instagram-php``` in the cloned folder
+4. Run ```composer install``` in the cloned folder
 5. Edit the Username and Password inside of `config.php` to your Instagram details
 6. Run the `goLive.php` script. (`php -f goLive.php`)
 7. Copy you Stream-URL and Stream-Key and paste them into your streaming software. [See OBS-Setup](https://github.com/JRoy/InstagramLive-PHP#obs-setup)

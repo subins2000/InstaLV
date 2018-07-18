@@ -3,7 +3,7 @@ if (php_sapi_name() !== "cli") {
     die("You may only run this inside of the PHP Command Line! If you did run this in the command line, please report: \"".php_sapi_name()."\" to the InstagramLive-PHP Repo!");
 }
 
-logM("Loading InstagramLive-PHP v0.3...");
+logM("Loading InstagramLive-PHP v0.4...");
 set_time_limit(0);
 date_default_timezone_set('America/New_York');
 
@@ -27,7 +27,17 @@ if (IG_USERNAME == "USERNAME" || IG_PASS == "PASSWORD") {
 logM("Logging into Instagram...");
 $ig = new Instagram($debug, $truncatedDebug);
 try {
-    $ig->login(IG_USERNAME, IG_PASS);
+    $loginResponse = $ig->login(IG_USERNAME, IG_PASS);
+
+    if ($loginResponse !== null && $loginResponse->isTwoFactorRequired()) {
+        logM("Two-Factor Required! Please check your phone for an SMS Code!");
+        $twoFactorIdentifier = $loginResponse->getTwoFactorInfo()->getTwoFactorIdentifier();
+        print "\nType your 2FA Code from SMS> ";
+        $handle = fopen ("php://stdin","r");
+        $verificationCode = trim(fgets($handle));
+        logM("Logging in with 2FA Code...");
+        $ig->finishTwoFactorLogin(IG_USERNAME, IG_PASS, $twoFactorIdentifier, $verificationCode);
+    }
 } catch (\Exception $e) {
     echo 'Error While Logging in to Instagram: '.$e->getMessage()."\n";
     exit(0);
