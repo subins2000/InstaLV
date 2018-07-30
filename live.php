@@ -202,14 +202,14 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             $status = $info->getStatus();
             $muted = var_export($info->is_Messages(), true);
             $count = $info->getViewerCount();
-            writeOutput('info', "Info:\nStatus: $status\nMuted: $muted\nViewer Count: $count");
+            writeOutput('info', "Info:<br/>Status: $status<br/>Muted: $muted<br/>Viewer Count: $count");
         } elseif ($cmd == 'viewers') {
-            $output = 'Viewers:\n';
+            $ooutput = '';
             $ig->live->getInfo($broadcastId);
             foreach ($ig->live->getViewerList($broadcastId)->getUsers() as &$cuser) {
-                $output .= "@".$cuser->getUsername()." (".$cuser->getFullName().")";
+                $output .= "@".$cuser->getUsername()." (".$cuser->getFullName().")<br/>";
             }
-            writeOutput('info', $output);
+            writeOutput('viewers', $output);
         }
 
         // Get broadcast comments.
