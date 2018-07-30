@@ -85,7 +85,11 @@ try {
     echo 'Error While Creating Livestream: '.$e->getMessage()."\n";
 }
 
-function writeOutput($output) {
+function writeOutput($cmd, $msg) {
+    $response = [
+        'cmd'    => $cmd,
+        'values' => is_array($msg) ? $msg : [$msg],
+    ];
     file_put_contents(__DIR__ . '/response', json_encode($output));
 }
 
