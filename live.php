@@ -173,14 +173,13 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
         } elseif ($cmd == 'dcomments') {
             $ig->live->disableComments($broadcastId);
             writeOutput('info', "Disabled Comments!");
-        } elseif ($cmd == 'stop' || $cmd == 'end') {
+        } elseif ($cmd == 'end'){
+            $added = '';
+            $archived = $values[0];
+
             //Needs this to retain, I guess?
             $ig->live->getFinalViewerList($broadcastId);
             $ig->live->end($broadcastId);
-            writeOutput('prompt', ["Stream Ended!\nWould you like to keep the stream archived for 24 hours ?", 'exit']);
-        } elseif ($cmd == 'exit'){
-            $added = '';
-            $archived = $values[0];
 
             if ($archived == 'yes') {
                 $ig->live->addToPostLive($broadcastId);
