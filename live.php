@@ -116,16 +116,15 @@ do {
 
     if($cmd == 'ecomments') {
         $live->enableComments($broadcastId);
-        writeOutput("Enabled Comments!");
+        writeOutput('info', "Enabled Comments!");
     } elseif ($cmd == 'dcomments') {
         $live->disableComments($broadcastId);
-        writeOutput("Disabled Comments!");
+        writeOutput('info', "Disabled Comments!");
     } elseif ($cmd == 'stop' || $cmd == 'end') {
         //Needs this to retain, I guess?
         $live->getFinalViewerList($broadcastId);
         $live->end($broadcastId);
-        writeOutput("Stream Ended!\nWould you like to keep the stream archived for 24 hours? Type \"yes\" to do so or anything else to not.");
-        print "> ";
+        writeOutput('prompt', ["Stream Ended!\nWould you like to keep the stream archived for 24 hours ?", 'exit']);
     } elseif ($cmd == 'exit'){
         $added = '';
         $archived = $values[0];
@@ -135,27 +134,24 @@ do {
             $added = 'Livestream added to archive!\n';
         }
 
-        writeOutput($added . "Wrapping up and exiting...");
+        writeOutput('info', $added . "Wrapping up and exiting...");
     } elseif ($cmd == 'url') {
-        writeOutput("================================ Stream URL ================================\n".$streamUrl."\n================================ Stream URL ================================");
+        writeOutput('info', $streamUrl);
     } elseif ($cmd == 'key') {
-        writeOutput("======================== Current Stream Key ========================\n".$streamKey."\n======================== Current Stream Key ========================");
+        writeOutput('info', $streamKey);
     } elseif ($cmd == 'info') {
         $info = $live->getInfo($broadcastId);
         $status = $info->getStatus();
         $muted = var_export($info->is_Messages(), true);
         $count = $info->getViewerCount();
-        writeOutput("Info:\nStatus: $status\nMuted: $muted\nViewer Count: $count");
+        writeOutput('info', "Info:\nStatus: $status\nMuted: $muted\nViewer Count: $count");
     } elseif ($cmd == 'viewers') {
-        writeOutput("Viewers:");
+        $output = 'Viewers:\n';
         $live->getInfo($broadcastId);
         foreach ($live->getViewerList($broadcastId)->getUsers() as &$cuser) {
-            writeOutput("@".$cuser->getUsername()." (".$cuser->getFullName().")");
+            $output .= "@".$cuser->getUsername()." (".$cuser->getFullName().")";
         }
-    } elseif ($cmd == 'help') {
-        writeOutput("Commands:\nhelp - Prints this message\nurl - Prints Stream URL\nkey - Prints Stream Key\ninfo - Grabs Stream Info\nviewers - Grabs Stream Viewers\necomments - Enables Comments\ndcomments - Disables Comments\nstop - Stops the Live Stream");
-    } else {
-       writeOutput("Invalid Command. Type \"help\" for help!");
+        writeOutput('info', $output);
     }
 
     // Get broadcast comments.
