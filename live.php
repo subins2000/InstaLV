@@ -177,7 +177,7 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             $added = '';
             $archived = $values[0];
 
-            writeOutput('info', $added . "Wrapping up and exiting...");
+            writeOutput('info', "Wrapping up and exiting...");
 
             //Needs this to retain, I guess?
             $ig->live->getFinalViewerList($broadcastId);
@@ -185,7 +185,7 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
 
             if ($archived == 'yes') {
                 $ig->live->addToPostLive($broadcastId);
-                $added = 'Livestream added to archive!\n';
+                $added = 'Livestream added to archive!<br/>';
             }
 
             unlink(__DIR__ . '/request');
