@@ -23,12 +23,27 @@ $live_response['likes'] = array_reverse($live_response['likes']);
             </a>
         </nav>
         <div class="container">
-            <h2>Controls</h2>
-            <div class="form-group">
-                <label>Refresh between</label>
-                <input type="number" id="refresh_secs" />
-                <label>seconds.<label>
-                <span>Pause <input type="checkbox" id="pause_refresh" />
+            <div class="row">
+                <div class="col-6">
+                    <h2>Controls</h2>
+                    <div class="form-group">
+                        <label>Refresh between</label>
+                        <input type="number" id="refresh_secs" />
+                        <label>seconds.<label>
+                        <span>Pause <input type="checkbox" id="pause_refresh" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <h2>Commands</h2>
+                    <button type="button"class="btn btn-danger" id="end_stream">End Stream</button>
+                    <button type="button"class="btn btn-info" id="get_info">Info</button>
+                    <button type="button"class="btn btn-warning" id="get_info">Clear Likes & Comments</button>
+                    <div>
+                        <blockquote class="blockquote" id="response" style="height: 100px;">
+                            <footer class="blockquote-footer">Response</footer>
+                        </blockquote>
+                    </div>
+                </div>
             </div>
             <script>
                 var refresh_interval,
