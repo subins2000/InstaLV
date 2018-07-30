@@ -14,11 +14,10 @@ if ($_SERVER['REQUEST_URI'] === '/response') {
 
 $live_response =  json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
 
-if (empty($live_response))
-    $live_response = [
-        'comments' => [],
-        'likes'    => [],
-    ];
+$live_response = array_merge([
+    'comments' => [],
+    'likes'    => [],
+], empty($live_response) ? [] : $live_response);
 
 $live_response['comments'] = array_reverse($live_response['comments']);
 $live_response['likes'] = array_reverse($live_response['likes']);
@@ -75,6 +74,9 @@ $live_response['likes'] = array_reverse($live_response['likes']);
 
                             setInterval(function() {
                                 $.get('/response', function(response) {
+                                    if ($('#response:hover').length != 0)
+                                        return;
+
                                     response = $.parseJSON(response);
 
                                     $('#response').html('<u>' + response.cmd + '</u><br/>' + response.values[0]);
