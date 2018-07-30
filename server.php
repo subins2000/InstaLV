@@ -56,7 +56,7 @@ $live_response['likes'] = array_reverse($live_response['likes']);
                     <button type="button"class="btn btn-primary" id="get_viewers" data-cmd="viewers">Viewers</button>
                     <button type="button"class="btn btn-warning" id="clear" data-cmd="clear">Clear Likes & Comments</button>
                     <div style="margin-top: 20px;">
-                        <blockquote class="blockquote border" style="min-height: 100px;">
+                        <blockquote class="blockquote border" style="min-height: 100px;word-wrap: break-word;">
                             <div id="response"></div>
                             <footer class="blockquote-footer">Response</footer>
                         </blockquote>
