@@ -86,7 +86,7 @@ try {
 }
 
 function addLike($user) {
-    $current = json_decode(file_get_contents(__DIR__ . '/live_response'), true);
+    $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
     if (!is_array($current))
         $current = [];
 
@@ -98,7 +98,7 @@ function addLike($user) {
 }
 
 function addComment($user, $comment) {
-    $current = json_decode(file_get_contents(__DIR__ . '/live_response'), true);
+    $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
     if (!is_array($current))
         $current = [];
 
@@ -140,7 +140,7 @@ function startHandler() {
     do {
         $cmd = '';
 
-        $request = json_decode(file_get_contents('request'), true);
+        $request = json_decode(@file_get_contents('request'), true);
 
         if (!empty($request)) {
             $cmd = $request['cmd'];
