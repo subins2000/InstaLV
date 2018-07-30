@@ -1,6 +1,6 @@
 <?php
 define('IG_USERNAME', 'USERNAME');
-define('IG_PASS', 'USERNAME');
+define('IG_PASS', 'PASSWORD');
 
 $cfg_callbacks = [
     'like' => function($user) {
