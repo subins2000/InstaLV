@@ -231,6 +231,12 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             $lastCommentTs = end($comments)->getCreatedAt();
         }
 
+        foreach ($comments as $comment) {
+            $user = $ig->people->getInfoById($comment->getUserId())->getUser();
+            $commentText = $comment->getText();
+            addComment($user, $commentText);
+        }
+
         // Get broadcast heartbeat and viewer count.
         $ig->live->getHeartbeatAndViewerCount($broadcastId);
 
@@ -243,12 +249,6 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
         foreach($likeCountResponse->getLikers() as $user) {
             $user = $ig->people->getInfoById($user->getUserId())->getUser();
             addLike($user);
-        }
-
-        foreach ($comments as $comment) {
-            $user = $ig->people->getInfoById($comment->getUserId())->getUser();
-            $commentText = $comment->getText();
-            addComment($user, $commentText);
         }
 
         sleep(2);
