@@ -158,7 +158,7 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
     // The controlling variable for the infinite while loop
     $exit = false;
 
-    unlink(__DIR__ . '/request');
+    @unlink(__DIR__ . '/request');
 
     do {
         $cmd = '';
