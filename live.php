@@ -76,8 +76,8 @@ try {
 
     logM("^^ Please Start Streaming in OBS/Streaming Program with the URL and Key Above ^^");
 
-    logM("Live Stream is Ready for Commands:");
-    newCommand($ig->live, $broadcastId, $streamUrl, $streamKey);
+    logM("Live Stream is Ready for Commands");
+    startHandler();
     logM("Something Went Super Wrong! Attempting to At-Least Clean Up!");
     $ig->live->getFinalViewerList($broadcastId);
     $ig->live->end($broadcastId);
@@ -120,115 +120,110 @@ function writeOutput($cmd, $msg) {
     file_put_contents(__DIR__ . '/response', json_encode($output));
 }
 
-// The following loop performs important requests to obtain information
-// about the broadcast while it is ongoing.
-// NOTE: This is REQUIRED if you want the comments and likes to appear
-// in your saved post-live feed.
-// NOTE: These requests are sent *while* the video is being broadcasted.
-$lastCommentTs = 0;
-$lastLikeTs = 0;
-
-// The controlling variable for the infinite while loop
-$exit = false;
-
-do {
-    $cmd = '';
-
-    $request = json_decode(file_get_contents('request'), true);
-
-    if (!empty($request)) {
-        $cmd = $request['cmd'];
-        $values = $request['values'];
-    }
-
-    if($cmd == 'ecomments') {
-        $live->enableComments($broadcastId);
-        writeOutput('info', "Enabled Comments!");
-    } elseif ($cmd == 'dcomments') {
-        $live->disableComments($broadcastId);
-        writeOutput('info', "Disabled Comments!");
-    } elseif ($cmd == 'stop' || $cmd == 'end') {
-        //Needs this to retain, I guess?
-        $live->getFinalViewerList($broadcastId);
-        $live->end($broadcastId);
-        writeOutput('prompt', ["Stream Ended!\nWould you like to keep the stream archived for 24 hours ?", 'exit']);
-    } elseif ($cmd == 'exit'){
-        $added = '';
-        $archived = $values[0];
-
-        if ($archived == 'yes') {
-            $live->addToPostLive($broadcastId);
-            $added = 'Livestream added to archive!\n';
-        }
-
-        writeOutput('info', $added . "Wrapping up and exiting...");
-    } elseif ($cmd == 'url') {
-        writeOutput('info', $streamUrl);
-    } elseif ($cmd == 'key') {
-        writeOutput('info', $streamKey);
-    } elseif ($cmd == 'info') {
-        $info = $live->getInfo($broadcastId);
-        $status = $info->getStatus();
-        $muted = var_export($info->is_Messages(), true);
-        $count = $info->getViewerCount();
-        writeOutput('info', "Info:\nStatus: $status\nMuted: $muted\nViewer Count: $count");
-    } elseif ($cmd == 'viewers') {
-        $output = 'Viewers:\n';
-        $live->getInfo($broadcastId);
-        foreach ($live->getViewerList($broadcastId)->getUsers() as &$cuser) {
-            $output .= "@".$cuser->getUsername()." (".$cuser->getFullName().")";
-        }
-        writeOutput('info', $output);
-    }
-
-    // Get broadcast comments.
-    // - The latest comment timestamp will be required for the next
-    //   getComments() request.
-    // - There are two types of comments: System comments and user comments.
-    //   We compare both and keep the newest (most recent) timestamp.
-    $commentsResponse = $live->getComments($broadcastId, $lastCommentTs);
-    $systemComments = $commentsResponse->getSystemComments();
-    $comments = $commentsResponse->getComments();
-    if (!empty($systemComments)) {
-        $lastCommentTs = end($systemComments)->getCreatedAt();
-    }
-    if (!empty($comments) && end($comments)->getCreatedAt() > $lastCommentTs) {
-        $lastCommentTs = end($comments)->getCreatedAt();
-    }
-
-    // Get broadcast heartbeat and viewer count.
-    $live->getHeartbeatAndViewerCount($broadcastId);
-
-    // Get broadcast like count.
-    // - The latest like timestamp will be required for the next
-    //   getLikeCount() request.
-    $likeCountResponse = $live->getLikeCount($broadcastId, $lastLikeTs);
-    $lastLikeTs = $likeCountResponse->getLikeTs();
-
-    foreach($likeCountResponse->getLikers() as $user) {
-        $user = $ig->people->getInfoById($user->getUserId());
-        addLike($user);
-    }
-
-    foreach ($comments as $comment) {
-        $user = $ig->people->getInfoById($comment->getUserId());
-        $commentText = $comment->getText();
-        addComment($user, $commentText);
-    }
-
-    sleep(2);
-} while(!$exit);
-
 /**
  * The handler for interpreting the commands passed via the command line.
  */
-function newCommand(Live $live, $broadcastId, $streamUrl, $streamKey) {
-    print "\n> ";
-    $handle = fopen ("php://stdin","r");
-    $line = trim(fgets($handle));
+function startHandler() {
+    global $ig;
 
-    fclose($handle);
-    newCommand($live, $broadcastId, $streamUrl, $streamKey);
+    // The following loop performs important requests to obtain information
+    // about the broadcast while it is ongoing.
+    // NOTE: This is REQUIRED if you want the comments and likes to appear
+    // in your saved post-live feed.
+    // NOTE: These requests are sent *while* the video is being broadcasted.
+    $lastCommentTs = 0;
+    $lastLikeTs = 0;
+
+    // The controlling variable for the infinite while loop
+    $exit = false;
+
+    do {
+        $cmd = '';
+
+        $request = json_decode(file_get_contents('request'), true);
+
+        if (!empty($request)) {
+            $cmd = $request['cmd'];
+            $values = $request['values'];
+        }
+
+        if($cmd == 'ecomments') {
+            $live->enableComments($broadcastId);
+            writeOutput('info', "Enabled Comments!");
+        } elseif ($cmd == 'dcomments') {
+            $live->disableComments($broadcastId);
+            writeOutput('info', "Disabled Comments!");
+        } elseif ($cmd == 'stop' || $cmd == 'end') {
+            //Needs this to retain, I guess?
+            $live->getFinalViewerList($broadcastId);
+            $live->end($broadcastId);
+            writeOutput('prompt', ["Stream Ended!\nWould you like to keep the stream archived for 24 hours ?", 'exit']);
+        } elseif ($cmd == 'exit'){
+            $added = '';
+            $archived = $values[0];
+
+            if ($archived == 'yes') {
+                $live->addToPostLive($broadcastId);
+                $added = 'Livestream added to archive!\n';
+            }
+
+            writeOutput('info', $added . "Wrapping up and exiting...");
+        } elseif ($cmd == 'url') {
+            writeOutput('info', $streamUrl);
+        } elseif ($cmd == 'key') {
+            writeOutput('info', $streamKey);
+        } elseif ($cmd == 'info') {
+            $info = $live->getInfo($broadcastId);
+            $status = $info->getStatus();
+            $muted = var_export($info->is_Messages(), true);
+            $count = $info->getViewerCount();
+            writeOutput('info', "Info:\nStatus: $status\nMuted: $muted\nViewer Count: $count");
+        } elseif ($cmd == 'viewers') {
+            $output = 'Viewers:\n';
+            $live->getInfo($broadcastId);
+            foreach ($live->getViewerList($broadcastId)->getUsers() as &$cuser) {
+                $output .= "@".$cuser->getUsername()." (".$cuser->getFullName().")";
+            }
+            writeOutput('info', $output);
+        }
+
+        // Get broadcast comments.
+        // - The latest comment timestamp will be required for the next
+        //   getComments() request.
+        // - There are two types of comments: System comments and user comments.
+        //   We compare both and keep the newest (most recent) timestamp.
+        $commentsResponse = $live->getComments($broadcastId, $lastCommentTs);
+        $systemComments = $commentsResponse->getSystemComments();
+        $comments = $commentsResponse->getComments();
+        if (!empty($systemComments)) {
+            $lastCommentTs = end($systemComments)->getCreatedAt();
+        }
+        if (!empty($comments) && end($comments)->getCreatedAt() > $lastCommentTs) {
+            $lastCommentTs = end($comments)->getCreatedAt();
+        }
+
+        // Get broadcast heartbeat and viewer count.
+        $live->getHeartbeatAndViewerCount($broadcastId);
+
+        // Get broadcast like count.
+        // - The latest like timestamp will be required for the next
+        //   getLikeCount() request.
+        $likeCountResponse = $live->getLikeCount($broadcastId, $lastLikeTs);
+        $lastLikeTs = $likeCountResponse->getLikeTs();
+
+        foreach($likeCountResponse->getLikers() as $user) {
+            $user = $ig->people->getInfoById($user->getUserId());
+            addLike($user);
+        }
+
+        foreach ($comments as $comment) {
+            $user = $ig->people->getInfoById($comment->getUserId());
+            $commentText = $comment->getText();
+            addComment($user, $commentText);
+        }
+
+        sleep(2);
+    } while(!$exit);
 }
 
 /**
