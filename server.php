@@ -51,7 +51,7 @@ $live_response['likes'] = array_reverse($live_response['likes']);
                 <div class="col-8">
                     <h2>Commands</h2>
                     <button type="button"class="btn btn-danger" id="end_stream">End Stream</button>
-                    <button type="button"class="btn btn-danger" id="get_stream_info">Stream Key/URL</button>
+                    <button type="button"class="btn btn-danger" id="get_stream_info" data-cmd="stream_info">Stream Key/URL</button>
                     <button type="button"class="btn btn-info" id="get_info" data-cmd="info">Info</button>
                     <button type="button"class="btn btn-primary" id="get_viewers" data-cmd="viewers">Viewers</button>
                     <button type="button"class="btn btn-warning" id="clear" data-cmd="clear">Clear Likes & Comments</button>
