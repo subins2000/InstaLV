@@ -192,13 +192,10 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
                 $added = 'Livestream added to archive!<br/>';
             }
 
-            unlink(__DIR__ . '/request');
-
             writeOutput('info', $added . "Ended stream");
             exit();
         } elseif ($cmd == 'clear') {
             unlink(__DIR__ . '/live_response');
-            unlink(__DIR__ . '/request');
         } elseif ($cmd == 'stream_info') {
             writeOutput('stream_info', 'URL : <pre>' . $streamUrl . '</pre>Key : <pre>' . $streamKey . '</pre>');
         } elseif ($cmd == 'info') {
@@ -215,6 +212,8 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             }
             writeOutput('viewers', $output);
         }
+
+        unlink(__DIR__ . '/request');
 
         // Get broadcast comments.
         // - The latest comment timestamp will be required for the next
