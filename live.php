@@ -77,7 +77,7 @@ try {
     logM("^^ Please Start Streaming in OBS/Streaming Program with the URL and Key Above ^^");
 
     logM("Live Stream is Ready for Commands");
-    startHandler();
+    startHandler($ig, $broadcastId, $streamUrl, $streamKey);
     logM("Something Went Super Wrong! Attempting to At-Least Clean Up!");
     $ig->live->getFinalViewerList($broadcastId);
     $ig->live->end($broadcastId);
@@ -123,9 +123,7 @@ function writeOutput($cmd, $msg) {
 /**
  * The handler for interpreting the commands passed via the command line.
  */
-function startHandler() {
-    global $ig;
-
+function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
     // The following loop performs important requests to obtain information
     // about the broadcast while it is ongoing.
     // NOTE: This is REQUIRED if you want the comments and likes to appear
@@ -148,22 +146,22 @@ function startHandler() {
         }
 
         if($cmd == 'ecomments') {
-            $live->enableComments($broadcastId);
+            $ig->live->enableComments($broadcastId);
             writeOutput('info', "Enabled Comments!");
         } elseif ($cmd == 'dcomments') {
-            $live->disableComments($broadcastId);
+            $ig->live->disableComments($broadcastId);
             writeOutput('info', "Disabled Comments!");
         } elseif ($cmd == 'stop' || $cmd == 'end') {
             //Needs this to retain, I guess?
-            $live->getFinalViewerList($broadcastId);
-            $live->end($broadcastId);
+            $ig->live->getFinalViewerList($broadcastId);
+            $ig->live->end($broadcastId);
             writeOutput('prompt', ["Stream Ended!\nWould you like to keep the stream archived for 24 hours ?", 'exit']);
         } elseif ($cmd == 'exit'){
             $added = '';
             $archived = $values[0];
 
             if ($archived == 'yes') {
-                $live->addToPostLive($broadcastId);
+                $ig->live->addToPostLive($broadcastId);
                 $added = 'Livestream added to archive!\n';
             }
 
@@ -173,15 +171,15 @@ function startHandler() {
         } elseif ($cmd == 'key') {
             writeOutput('info', $streamKey);
         } elseif ($cmd == 'info') {
-            $info = $live->getInfo($broadcastId);
+            $info = $ig->live->getInfo($broadcastId);
             $status = $info->getStatus();
             $muted = var_export($info->is_Messages(), true);
             $count = $info->getViewerCount();
             writeOutput('info', "Info:\nStatus: $status\nMuted: $muted\nViewer Count: $count");
         } elseif ($cmd == 'viewers') {
             $output = 'Viewers:\n';
-            $live->getInfo($broadcastId);
-            foreach ($live->getViewerList($broadcastId)->getUsers() as &$cuser) {
+            $ig->live->getInfo($broadcastId);
+            foreach ($ig->live->getViewerList($broadcastId)->getUsers() as &$cuser) {
                 $output .= "@".$cuser->getUsername()." (".$cuser->getFullName().")";
             }
             writeOutput('info', $output);
@@ -192,7 +190,7 @@ function startHandler() {
         //   getComments() request.
         // - There are two types of comments: System comments and user comments.
         //   We compare both and keep the newest (most recent) timestamp.
-        $commentsResponse = $live->getComments($broadcastId, $lastCommentTs);
+        $commentsResponse = $ig->live->getComments($broadcastId, $lastCommentTs);
         $systemComments = $commentsResponse->getSystemComments();
         $comments = $commentsResponse->getComments();
         if (!empty($systemComments)) {
@@ -203,12 +201,12 @@ function startHandler() {
         }
 
         // Get broadcast heartbeat and viewer count.
-        $live->getHeartbeatAndViewerCount($broadcastId);
+        $ig->live->getHeartbeatAndViewerCount($broadcastId);
 
         // Get broadcast like count.
         // - The latest like timestamp will be required for the next
         //   getLikeCount() request.
-        $likeCountResponse = $live->getLikeCount($broadcastId, $lastLikeTs);
+        $likeCountResponse = $ig->live->getLikeCount($broadcastId, $lastLikeTs);
         $lastLikeTs = $likeCountResponse->getLikeTs();
 
         foreach($likeCountResponse->getLikers() as $user) {
