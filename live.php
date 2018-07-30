@@ -174,9 +174,13 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
         if($cmd == 'ecomments') {
             $ig->live->enableComments($broadcastId);
             writeOutput('info', "Enabled Comments!");
+
+            unlink(__DIR__ . '/request');
         } elseif ($cmd == 'dcomments') {
             $ig->live->disableComments($broadcastId);
             writeOutput('info', "Disabled Comments!");
+
+            unlink(__DIR__ . '/request');
         } elseif ($cmd == 'end'){
             $added = '';
             $archived = $values[0];
@@ -193,11 +197,16 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             }
 
             writeOutput('info', $added . "Ended stream");
+            unlink(__DIR__ . '/request');
+
             exit();
         } elseif ($cmd == 'clear') {
             unlink(__DIR__ . '/live_response');
+            unlink(__DIR__ . '/request');
         } elseif ($cmd == 'stream_info') {
             writeOutput('stream_info', 'URL : <pre>' . $streamUrl . '</pre>Key : <pre>' . $streamKey . '</pre>');
+
+            unlink(__DIR__ . '/request');
         } elseif ($cmd == 'info') {
             $info = $ig->live->getInfo($broadcastId);
             $status = $info->getStatus();
@@ -212,8 +221,6 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             }
             writeOutput('viewers', $output);
         }
-
-        unlink(__DIR__ . '/request');
 
         // Get broadcast comments.
         // - The latest comment timestamp will be required for the next
