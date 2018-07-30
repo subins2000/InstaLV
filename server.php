@@ -7,8 +7,8 @@ if (empty($live_response))
         'likes'    => [],
     ];
 
-rsort($live_response['comments']);
-rsort($live_response['likes']);
+$live_response['comments'] = array_reverse($live_response['comments']);
+$live_response['likes'] = array_reverse($live_response['likes']);
 ?>
 <!DOCTYPE html>
 <html>
