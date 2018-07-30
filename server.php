@@ -37,18 +37,21 @@ $live_response['likes'] = array_reverse($live_response['likes']);
         </nav>
         <div class="container">
             <div class="row">
-                <div class="col-6">
+                <div class="col-4">
                     <h2>Controls</h2>
                     <div class="form-group">
                         <label>Refresh between</label>
                         <input type="number" id="refresh_secs" />
                         <label>seconds.<label>
-                        <span>Pause <input type="checkbox" id="pause_refresh" />
+                    </div>
+                    <div>
+                        Pause : <input type="checkbox" id="pause_refresh" />
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-8">
                     <h2>Commands</h2>
                     <button type="button"class="btn btn-danger" id="end_stream">End Stream</button>
+                    <button type="button"class="btn btn-danger" id="get_stream_info">Stream Key/URL</button>
                     <button type="button"class="btn btn-info" id="get_info" data-cmd="info">Info</button>
                     <button type="button"class="btn btn-primary" id="get_viewers" data-cmd="viewers">Viewers</button>
                     <button type="button"class="btn btn-warning" id="clear" data-cmd="clear">Clear Likes & Comments</button>
@@ -66,7 +69,7 @@ $live_response['likes'] = array_reverse($live_response['likes']);
                                 $.post('/request', {cmd: 'end', values: [keep]});
                             });
 
-                            $('#get_info, #get_viewers, #clear').on('click', function() {
+                            $('#get_stream_info, #get_info, #get_viewers, #clear').on('click', function() {
                                 $.post('/request', {cmd: $(this).data('cmd')});
                             });
 
