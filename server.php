@@ -50,9 +50,10 @@ $live_response['likes'] = array_reverse($live_response['likes']);
                     <h2>Commands</h2>
                     <button type="button"class="btn btn-danger" id="end_stream">End Stream</button>
                     <button type="button"class="btn btn-info" id="get_info" data-cmd="info">Info</button>
+                    <button type="button"class="btn btn-primary" id="get_viewers" data-cmd="viewers">Viewers</button>
                     <button type="button"class="btn btn-warning" id="clear" data-cmd="clear">Clear Likes & Comments</button>
                     <div style="margin-top: 20px;">
-                        <blockquote class="blockquote border" style="height: 100px;">
+                        <blockquote class="blockquote border" style="min-height: 100px;">
                             <div id="response"></div>
                             <footer class="blockquote-footer">Response</footer>
                         </blockquote>
@@ -65,12 +66,16 @@ $live_response['likes'] = array_reverse($live_response['likes']);
                                 $.post('/request', {cmd: 'end', values: [keep]});
                             });
 
-                            $('#get_info, #clear').on('click', function() {
+                            $('#get_info, #get_viewers, #clear').on('click', function() {
                                 $.post('/request', {cmd: $(this).data('cmd')});
                             });
 
                             setInterval(function() {
-                                $('#response').load('/response');
+                                $.get('/response', function(response) {
+                                    response = $.parseJSON(response);
+
+                                    $('#response').html('<u>' + response.cmd + '</u><br/>' + response.values[0]);
+                                });
                             }, 1000);
                         });
                     </script>

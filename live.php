@@ -204,7 +204,7 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             $count = $info->getViewerCount();
             writeOutput('info', "Info:<br/>Status: $status<br/>Muted: $muted<br/>Viewer Count: $count");
         } elseif ($cmd == 'viewers') {
-            $ooutput = '';
+            $output = '';
             $ig->live->getInfo($broadcastId);
             foreach ($ig->live->getViewerList($broadcastId)->getUsers() as &$cuser) {
                 $output .= "@".$cuser->getUsername()." (".$cuser->getFullName().")<br/>";
