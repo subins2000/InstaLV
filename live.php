@@ -78,7 +78,9 @@ try {
 
     logM("Live Stream is Ready for Commands");
     startHandler($ig, $broadcastId, $streamUrl, $streamKey);
+
     logM("Something Went Super Wrong! Attempting to At-Least Clean Up!");
+
     $ig->live->getFinalViewerList($broadcastId);
     $ig->live->end($broadcastId);
 } catch (\Exception $e) {
@@ -155,6 +157,8 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
 
     // The controlling variable for the infinite while loop
     $exit = false;
+
+    unlink(__DIR__ . '/request');
 
     do {
         $cmd = '';
