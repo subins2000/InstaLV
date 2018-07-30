@@ -177,6 +177,8 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             $added = '';
             $archived = $values[0];
 
+            writeOutput('info', $added . "Wrapping up and exiting...");
+
             //Needs this to retain, I guess?
             $ig->live->getFinalViewerList($broadcastId);
             $ig->live->end($broadcastId);
@@ -188,7 +190,7 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
 
             unlink(__DIR__ . '/request');
 
-            writeOutput('info', $added . "Wrapping up and exiting...");
+            writeOutput('info', $added . "Ended stream");
             exit();
         } elseif ($cmd == 'clear') {
             unlink(__DIR__ . '/live_response');
