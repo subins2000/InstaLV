@@ -106,6 +106,7 @@ function addComment($user, $comment) {
 
     $new['comments'][] = [
         'comment'  => $comment,
+        'profile_pic_url' => $user->getProfilePicUrl(),
         'username' => $user->getUsername(),
     ];
 
@@ -117,7 +118,7 @@ function writeOutput($cmd, $msg) {
         'cmd'    => $cmd,
         'values' => is_array($msg) ? $msg : [$msg],
     ];
-    file_put_contents(__DIR__ . '/response', json_encode($output));
+    file_put_contents(__DIR__ . '/response', json_encode($response));
 }
 
 /**
@@ -137,8 +138,9 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
 
     do {
         $cmd = '';
+        $values = [];
 
-        $request = json_decode(@file_get_contents('request'), true);
+        $request = json_decode(@file_get_contents(__DIR__ . '/request'), true);
 
         if (!empty($request)) {
             $cmd = $request['cmd'];
@@ -166,6 +168,7 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             }
 
             writeOutput('info', $added . "Wrapping up and exiting...");
+            exit();
         } elseif ($cmd == 'url') {
             writeOutput('info', $streamUrl);
         } elseif ($cmd == 'key') {
@@ -210,12 +213,12 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
         $lastLikeTs = $likeCountResponse->getLikeTs();
 
         foreach($likeCountResponse->getLikers() as $user) {
-            $user = $ig->people->getInfoById($user->getUserId());
+            $user = $ig->people->getInfoById($user->getUserId())->getUser();
             addLike($user);
         }
 
         foreach ($comments as $comment) {
-            $user = $ig->people->getInfoById($comment->getUserId());
+            $user = $ig->people->getInfoById($comment->getUserId())->getUser();
             $commentText = $comment->getText();
             addComment($user, $commentText);
         }
