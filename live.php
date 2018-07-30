@@ -200,7 +200,7 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             unlink(__DIR__ . '/live_response');
             unlink(__DIR__ . '/request');
         } elseif ($cmd == 'stream_info') {
-            writeOutput('stream_info', 'URL : ' . $streamUrl . '<br/>Key : ' . $streamKey);
+            writeOutput('stream_info', 'URL : <pre>' . $streamUrl . '</pre>Key : <pre>' . $streamKey . '</pre>');
         } elseif ($cmd == 'info') {
             $info = $ig->live->getInfo($broadcastId);
             $status = $info->getStatus();
