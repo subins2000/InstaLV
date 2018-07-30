@@ -1,3 +1,12 @@
+<?php
+$live_response =  json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
+
+if (empty($live_response))
+    $live_response = [
+        'comments' => [],
+        'likes'    => [],
+    ];
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -5,7 +14,22 @@
     </head>
     <body>
         <div class="container">
-            
+            <div class="row">
+                <div class="col-3">
+                    <h2>Comments</h2>
+                    <ul class="list-group">
+                        <?php
+                        foreach ($live_response['comments'] as $comment) {
+                            echo <<<HTML
+<li class="list-group-item">
+    {$comment['username']} : {$comment['comment']}
+</li>
+HTML;
+                        }
+                        ?>
+                    </ul>
+                </div>
+            </div>
         </div>
     </body>
 </html>
