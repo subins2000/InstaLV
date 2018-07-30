@@ -85,6 +85,33 @@ try {
     echo 'Error While Creating Livestream: '.$e->getMessage()."\n";
 }
 
+function addLike($user) {
+    $current = json_decode(file_get_contents(__DIR__ . '/live_response'), true);
+    if (!is_array($current))
+        $current = [];
+
+    $new = $current;
+
+    $new['likes'][] = $user->getUsername();
+
+    file_put_contents(__DIR__ . '/live_response', json_encode($new));
+}
+
+function addComment($user, $comment) {
+    $current = json_decode(file_get_contents(__DIR__ . '/live_response'), true);
+    if (!is_array($current))
+        $current = [];
+
+    $new = $current;
+
+    $new['comments'][] = [
+        'comment'  => $comment,
+        'username' => $user->getUsername(),
+    ];
+
+    file_put_contents(__DIR__ . '/live_response', json_encode($new));
+}
+
 function writeOutput($cmd, $msg) {
     $response = [
         'cmd'    => $cmd,
@@ -179,11 +206,14 @@ do {
     $lastLikeTs = $likeCountResponse->getLikeTs();
 
     foreach($likeCountResponse->getLikers() as $user) {
-        $likerID = $user->getUserId();
+        $user = $ig->people->getInfoById($user->getUserId());
+        addLike($user);
     }
 
     foreach ($comments as $comment) {
+        $user = $ig->people->getInfoById($comment->getUserId());
         $commentText = $comment->getText();
+        addComment($user, $commentText);
     }
 
     sleep(2);
