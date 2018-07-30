@@ -86,6 +86,8 @@ try {
 }
 
 function addLike($user) {
+    global $cfg_callbacks;
+
     $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
     if (!is_array($current))
         $current = [];
@@ -95,9 +97,19 @@ function addLike($user) {
     $new['likes'][] = $user->getUsername();
 
     file_put_contents(__DIR__ . '/live_response', json_encode($new));
+
+    if (
+        $cfg_callbacks &&
+        isset($cfg_callbacks['like']) &&
+        is_callable($cfg_callbacks['like'])
+    ) {
+        $cfg_callbacks['like']($user);
+    }
 }
 
 function addComment($user, $comment) {
+    global $cfg_callbacks;
+
     $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
     if (!is_array($current))
         $current = [];
@@ -111,6 +123,14 @@ function addComment($user, $comment) {
     ];
 
     file_put_contents(__DIR__ . '/live_response', json_encode($new));
+
+    if (
+        $cfg_callbacks &&
+        isset($cfg_callbacks['comment']) &&
+        is_callable($cfg_callbacks['comment'])
+    ) {
+        $cfg_callbacks['comment']($user, $comment);
+    }
 }
 
 function writeOutput($cmd, $msg) {
