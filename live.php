@@ -186,12 +186,13 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
                 $added = 'Livestream added to archive!\n';
             }
 
-            rm(__DIR__ . '/request');
+            unlink(__DIR__ . '/request');
 
             writeOutput('info', $added . "Wrapping up and exiting...");
             exit();
         } elseif ($cmd == 'clear') {
-            rm(__DIR__ . '/live_response');
+            unlink(__DIR__ . '/live_response');
+            unlink(__DIR__ . '/request');
         } elseif ($cmd == 'url') {
             writeOutput('info', $streamUrl);
         } elseif ($cmd == 'key') {
