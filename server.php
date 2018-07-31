@@ -31,7 +31,7 @@ $live_response['likes'] = array_reverse($live_response['likes']);
     <body>
         <nav class="navbar navbar-dark bg-dark">
             <a class="navbar-brand" href="#">
-                InstaLiveStream!
+                InstaLV!
             </a>
         </nav>
         <div class="container">
