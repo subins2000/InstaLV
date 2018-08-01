@@ -23,7 +23,7 @@ If you are running this after the first setup, work from step six on...
 If you'd like a video version of this tutorial, see [this video](https://www.youtube.com/watch?v=mZfzFNZSuQc).
 
 # OBS-Setup
-1. Go to the "Stream" section of your OBS Settings 
+1. Go to the "Stream" section of your OBS Settings
 2. Set "Stream Type" to "Custom Streaming Server"
 3. Set the "URL" field to the stream url you got from the script
 4. Set the "Stream key" field to the stream key you got from the script
@@ -31,6 +31,17 @@ If you'd like a video version of this tutorial, see [this video](https://www.you
 6. Start Streaming in OBS
 7. To stop streaming, run the "stop" command in your terminal and then press "Stop Streaming" in OBS
 * Note: To emulate the exact content being sent to Instagram, set your OBS canvas size to 720x1280. This can be done by going to Settings->Video and editing Base Canvas Resolution to "720x1280".
+
+# InstaLV
+
+InstaLV is a small webapp to control the live stream. It has the ability to :
+
+* Get stream info (url,key), viewers info
+* See likes & comments during live
+* Stop stream
+* Callbacks during like and comment
+
+See the folder `instalv` to use it.
 
 # FAQ
 #### OBS gives a "Failed to connect" error
