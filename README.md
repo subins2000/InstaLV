@@ -30,7 +30,7 @@ Built with [mgp25's amazing Instagram Private API Wrapper for PHP](https://githu
     ```
   You can also simply execute the `run_server.sh` or `run_server.bat` (Windows) which will run the above command.
 * Open the URL [`http://localhost:8000`](http://localhost:8000) in a browser.
-* In the InstaLV webpage, click on the button `Stream Info`. Copy the Stream-URL and Stream-Key and paste them into your streaming software. [See OBS-Setup](#obs-setup)
+* In the InstaLV webpage, click on the button `Stream Key/URL`. Copy the Stream-URL and Stream-Key and paste them into your streaming software. [See OBS-Setup](#obs-setup)
 
 ## OBS-Setup
 
