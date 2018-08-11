@@ -4,7 +4,7 @@ A PHP script + webapp that allows you to go live on Instagram with any streaming
 
 Built with [mgp25's amazing Instagram Private API Wrapper for PHP](https://github.com/mgp25/Instagram-API/).
 
-`InstaLV` is a fork of [JRoy/InstagramLive-PHP](`https://github.com/JRoy/InstagramLive-PHP`)
+**InstaLV** is a fork of [JRoy/InstagramLive-PHP](https://github.com/JRoy/InstagramLive-PHP).
 
 ## Features
 
