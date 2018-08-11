@@ -1,4 +1,4 @@
-# InstaLV
+# InstaLV ❤
 
 A PHP script + webapp that allows you to go live on Instagram with any streaming program that supports RTMP!
 
