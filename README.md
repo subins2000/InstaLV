@@ -30,7 +30,7 @@ Built with [mgp25's amazing Instagram Private API Wrapper for PHP](https://githu
 * Open the URL [`http://localhost:8000`](http://localhost:8000) in a browser.
 * In the InstaLV webpage, click on the button `Stream Info`. Copy the Stream-URL and Stream-Key and paste them into your streaming software. [See OBS-Setup](#obs-setup)
 
-# OBS-Setup
+## OBS-Setup
 
 * Go to the "Stream" section of your OBS Settings
 * Set "Stream Type" to "Custom Streaming Server"
@@ -41,7 +41,7 @@ Built with [mgp25's amazing Instagram Private API Wrapper for PHP](https://githu
 * To stop streaming, run the "stop" command in your terminal and then press "Stop Streaming" in OBS
 * Note: To emulate the exact content being sent to Instagram, set your OBS canvas size to 720x1280. This can be done by going to Settings->Video and editing Base Canvas Resolution to "720x1280".
 
-# FAQ
+## FAQ
 
 #### OBS gives a "Failed to connect" error
 
