@@ -15,9 +15,9 @@ Built with [mgp25's amazing Instagram Private API Wrapper for PHP](https://githu
 
 * Install PHP
 * [Install Composer](https://getcomposer.org/download/)
-* Clone the Repository
+* Download the [latest release](https://github.com/subins2000/InstaLV/releases) or clone this repo
 * Run ```composer install``` in the cloned folder
-* Edit the Username and Password inside of `config.php` to your Instagram details
+* Edit the username and password inside `config.php` with your Instagram username and password
 * Run the `live.php` script :
     ```bash
     php live.php
