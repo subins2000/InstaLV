@@ -25,11 +25,11 @@ set_time_limit(0);
 date_default_timezone_set('America/New_York');
 
 //Load Depends from Composer...
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 use InstagramAPI\Instagram;
 use InstagramAPI\Request\Live;
 
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 /////// (Sorta) Config (Still Don't Touch It) ///////
 $debug = false;
 $truncatedDebug = false;
