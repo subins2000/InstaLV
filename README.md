@@ -8,10 +8,10 @@ Built with [mgp25's amazing Instagram Private API Wrapper for PHP](https://githu
 
 ## Features
 
-* Get stream info (url,key), viewers info
-* See likes & comments during live
-* Stop stream
-* Callbacks during like and comment
+* A webapp to easily control livestream
+* See livestream viewers
+* See likes & comments during livestream
+* Call custom callbacks when a user like or comment
 
 ## Setup
 
