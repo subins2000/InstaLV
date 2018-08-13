@@ -6,6 +6,8 @@ Built with [mgp25's amazing Instagram Private API Wrapper for PHP](https://githu
 
 **InstaLV** is a fork of [JRoy/InstagramLive-PHP](https://github.com/JRoy/InstagramLive-PHP).
 
+![Screenshot](//i.imgur.com/4LmfMXi.png)
+
 ## Features
 
 * A webapp to easily control livestream
