@@ -17,7 +17,7 @@ Built with [mgp25's amazing Instagram Private API Wrapper for PHP](https://githu
 
 ## Setup
 
-* Install PHP
+* [Install PHP](http://php.net/downloads.php)
 * [Install Composer](https://getcomposer.org/download/)
 * Download the [latest release](https://github.com/subins2000/InstaLV/releases) or clone this repo
 * Run ```composer install``` in the cloned folder
