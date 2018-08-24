@@ -28,6 +28,17 @@ if ($_SERVER['REQUEST_URI'] === '/response') {
     exit;
 }
 
+$static_files = [
+    '/static/jquery-3.3.1.min.js',
+    '/static/bootstrap.min.css'
+];
+
+if (in_array($_SERVER['REQUEST_URI'], $static_files)) {
+    header('Content-type: text/css', true);
+    echo @file_get_contents(__DIR__ . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
 $live_response =  json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
 
 $live_response = array_merge([
@@ -52,8 +63,8 @@ foreach ($live_response['comments'] as $index => $comment) {
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <link rel="stylesheet" href="static/bootstrap.min.css" />
+        <script type="text/javascript" src="static/jquery-3.3.1.min.js"></script>
     </head>
     <body>
         <nav class="navbar navbar-dark bg-dark">
