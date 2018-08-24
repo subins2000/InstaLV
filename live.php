@@ -130,11 +130,10 @@ function addLike($user) {
  * Add a comment to list
  * @param InstagramAPI\Response\Model\User    $user    User info
  * @param InstagramAPI\Response\Model\Comment $comment Comment info
+ * @param bool                                $pinned  Whether the comment is pinned
  */
-function addComment($user, $comment) {
+function addComment($user, $comment, $pinned = false) {
     global $cfg_callbacks;
-
-    var_dump($comment);
 
     $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
     if (!is_array($current))
@@ -145,6 +144,7 @@ function addComment($user, $comment) {
     $new['comments'][] = [
         'comment'  => $comment->getText(),
         'id' => $comment->getPk(),
+        'pinned' => $pinned,
         'profile_pic_url' => $user->getProfilePicUrl(),
         'username' => $user->getUsername(),
     ];
@@ -178,6 +178,7 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
     // in your saved post-live feed.
     // NOTE: These requests are sent *while* the video is being broadcasted.
     $lastCommentTs = 0;
+    $lastCommentPin = false;
     $lastLikeTs = 0;
 
     // The controlling variable for the infinite while loop
@@ -204,6 +205,15 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
         } elseif ($cmd == 'dcomments') {
             $ig->live->disableComments($broadcastId);
             writeOutput('info', "Disabled Comments!");
+
+            unlink(__DIR__ . '/request');
+        } elseif ($cmd == 'pin') {
+            $commentId = $values[0];
+
+            if (strlen($commentId) === 17) {
+                $ig->live->pinComment($broadcastId, $commentId);
+                writeOutput('info', 'Pinned comment');
+            }
 
             unlink(__DIR__ . '/request');
         } elseif ($cmd == 'end'){
@@ -262,9 +272,27 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             $lastCommentTs = end($comments)->getCreatedAt();
         }
 
+        if ($commentsResponse->isPinnedComment()) {
+            $pinnedComment = $commentsResponse->getPinnedComment();
+            $lastCommentPin = [
+                'comment' => $pinnedComment->getText(),
+                'id' => $pinnedComment->getPk(),
+                'user' => $pinnedComment->getUser()->getUsername(),
+            ];
+        } else {
+            $lastCommentPin = false;
+        }
+
         foreach ($comments as $comment) {
             $user = $ig->people->getInfoById($comment->getUserId())->getUser();
-            addComment($user, $comment);
+            addComment(
+                $user,
+                $comment,
+                (
+                    $lastCommentPin &&
+                    $lastCommentPin['id'] == $comment->getPk()
+                ) ? true : false
+            );
         }
 
         // Get broadcast heartbeat and viewer count.
