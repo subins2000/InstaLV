@@ -126,6 +126,11 @@ function addLike($user) {
     }
 }
 
+/**
+ * Add a comment to list
+ * @param InstagramAPI\Response\Model\User    $user    User info
+ * @param InstagramAPI\Response\Model\Comment $comment Comment info
+ */
 function addComment($user, $comment) {
     global $cfg_callbacks;
 
@@ -136,7 +141,9 @@ function addComment($user, $comment) {
     $new = $current;
 
     $new['comments'][] = [
-        'comment'  => $comment,
+        'comment'  => $comment->getText(),
+        'id' => $comment->getPk(),
+        'pinned' => false,
         'profile_pic_url' => $user->getProfilePicUrl(),
         'username' => $user->getUsername(),
     ];
@@ -150,6 +157,42 @@ function addComment($user, $comment) {
     ) {
         $cfg_callbacks['comment']($user, $comment);
     }
+}
+
+/**
+ * Set pinned comment in storage
+ * @param string $comment Comment ID
+ */
+function setPinnedComment($commentId) {
+    $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
+    if (!is_array($current))
+        $current = [];
+
+    $new = $current;
+
+    foreach ($new['comments'] as $index => $comment) {
+        if ($comment['id'] == $commentId) {
+            $new['comments'][$index]['pinned'] = true;
+        } else {
+            $new['comments'][$index]['pinned'] = false;
+        }
+    }
+
+    file_put_contents(__DIR__ . '/live_response', json_encode($new));
+}
+
+function unsetPinnedComment() {
+    $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
+    if (!is_array($current))
+        $current = [];
+
+    $new = $current;
+
+    foreach ($new['comments'] as $index => $comment) {
+        $new['comments'][$index]['pinned'] = false;
+    }
+
+    file_put_contents(__DIR__ . '/live_response', json_encode($new));
 }
 
 function writeOutput($cmd, $msg) {
@@ -170,6 +213,7 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
     // in your saved post-live feed.
     // NOTE: These requests are sent *while* the video is being broadcasted.
     $lastCommentTs = 0;
+    $lastCommentPin = false;
     $lastLikeTs = 0;
 
     // The controlling variable for the infinite while loop
@@ -196,6 +240,32 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
         } elseif ($cmd == 'dcomments') {
             $ig->live->disableComments($broadcastId);
             writeOutput('info', "Disabled Comments!");
+
+            unlink(__DIR__ . '/request');
+        } elseif ($cmd == 'pin') {
+            $commentId = $values[0];
+
+            if (strlen($commentId) === 17) {
+                try {
+                    $ig->live->pinComment($broadcastId, $commentId);
+                    writeOutput('info', 'Pinned comment');
+                } catch (\Exception $e) {
+                    writeOutput('info', 'Unable to pin comment. Probably the comment doesn\'t exist');
+                }
+            }
+
+            unlink(__DIR__ . '/request');
+        } elseif ($cmd == 'unpin') {
+            if ($lastCommentPin) {
+                $ig->live->unpinComment($broadcastId, $lastCommentPin['id']);
+
+                unsetPinnedComment();
+                $lastCommentPin = false;
+
+                writeOutput('info', 'Unpinned comment');
+            } else {
+                writeOutput('info', 'No comments are pinned!');
+            }
 
             unlink(__DIR__ . '/request');
         } elseif ($cmd == 'end'){
@@ -254,10 +324,21 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             $lastCommentTs = end($comments)->getCreatedAt();
         }
 
+        if ($commentsResponse->isPinnedComment()) {
+            $pinnedComment = $commentsResponse->getPinnedComment();
+            $lastCommentPin = [
+                'comment' => $pinnedComment->getText(),
+                'id' => $pinnedComment->getPk(),
+                'user' => $pinnedComment->getUser()->getUsername(),
+            ];
+            setPinnedComment($lastCommentPin['id']);
+        } else {
+            $lastCommentPin = false;
+        }
+
         foreach ($comments as $comment) {
             $user = $ig->people->getInfoById($comment->getUserId())->getUser();
-            $commentText = $comment->getText();
-            addComment($user, $commentText);
+            addComment($user, $comment);
         }
 
         // Get broadcast heartbeat and viewer count.
