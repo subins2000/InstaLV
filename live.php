@@ -130,9 +130,8 @@ function addLike($user) {
  * Add a comment to list
  * @param InstagramAPI\Response\Model\User    $user    User info
  * @param InstagramAPI\Response\Model\Comment $comment Comment info
- * @param bool                                $pinned  Whether the comment is pinned
  */
-function addComment($user, $comment, $pinned = false) {
+function addComment($user, $comment) {
     global $cfg_callbacks;
 
     $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
@@ -144,7 +143,7 @@ function addComment($user, $comment, $pinned = false) {
     $new['comments'][] = [
         'comment'  => $comment->getText(),
         'id' => $comment->getPk(),
-        'pinned' => $pinned,
+        'pinned' => false,
         'profile_pic_url' => $user->getProfilePicUrl(),
         'username' => $user->getUsername(),
     ];
@@ -158,6 +157,42 @@ function addComment($user, $comment, $pinned = false) {
     ) {
         $cfg_callbacks['comment']($user, $comment);
     }
+}
+
+/**
+ * Set pinned comment in storage
+ * @param string $comment Comment ID
+ */
+function setPinnedComment($commentId) {
+    $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
+    if (!is_array($current))
+        $current = [];
+
+    $new = $current;
+
+    foreach ($new['comments'] as $index => $comment) {
+        if ($comment['id'] == $commentId) {
+            $new['comments'][$index]['pinned'] = true;
+        } else {
+            $new['comments'][$index]['pinned'] = false;
+        }
+    }
+
+    file_put_contents(__DIR__ . '/live_response', json_encode($new));
+}
+
+function unsetPinnedComment() {
+    $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
+    if (!is_array($current))
+        $current = [];
+
+    $new = $current;
+
+    foreach ($new['comments'] as $index => $comment) {
+        $new['comments'][$index]['pinned'] = false;
+    }
+
+    file_put_contents(__DIR__ . '/live_response', json_encode($new));
 }
 
 function writeOutput($cmd, $msg) {
@@ -211,8 +246,25 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
             $commentId = $values[0];
 
             if (strlen($commentId) === 17) {
-                $ig->live->pinComment($broadcastId, $commentId);
-                writeOutput('info', 'Pinned comment');
+                try {
+                    $ig->live->pinComment($broadcastId, $commentId);
+                    writeOutput('info', 'Pinned comment');
+                } catch (\Exception $e) {
+                    writeOutput('info', 'Unable to pin comment. Probably the comment doesn\'t exist');
+                }
+            }
+
+            unlink(__DIR__ . '/request');
+        } elseif ($cmd == 'unpin') {
+            if ($lastCommentPin) {
+                $ig->live->unpinComment($broadcastId, $lastCommentPin['id']);
+
+                unsetPinnedComment();
+                $lastCommentPin = false;
+
+                writeOutput('info', 'Unpinned comment');
+            } else {
+                writeOutput('info', 'No comments are pinned!');
             }
 
             unlink(__DIR__ . '/request');
@@ -279,20 +331,14 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
                 'id' => $pinnedComment->getPk(),
                 'user' => $pinnedComment->getUser()->getUsername(),
             ];
+            setPinnedComment($lastCommentPin['id']);
         } else {
             $lastCommentPin = false;
         }
 
         foreach ($comments as $comment) {
             $user = $ig->people->getInfoById($comment->getUserId())->getUser();
-            addComment(
-                $user,
-                $comment,
-                (
-                    $lastCommentPin &&
-                    $lastCommentPin['id'] == $comment->getPk()
-                ) ? true : false
-            );
+            addComment($user, $comment);
         }
 
         // Get broadcast heartbeat and viewer count.
