@@ -13,6 +13,7 @@ Built with [mgp25's amazing Instagram Private API Wrapper for PHP](https://githu
 * A webapp to easily control livestream
 * See livestream viewers
 * See likes & comments during livestream
+* Pin/Unpin comments
 * Call custom callbacks when a user like or comment
 
 ## Setup
