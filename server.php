@@ -37,6 +37,17 @@ $live_response = array_merge([
 
 $live_response['comments'] = array_reverse($live_response['comments']);
 $live_response['likes'] = array_reverse($live_response['likes']);
+
+/**
+ * Make pinned comment on top
+ */
+foreach ($live_response['comments'] as $index => $comment) {
+    if ($comment['pinned']) {
+        unset($live_response['comments'][$index]);
+        array_unshift($live_response['comments'] , $comment);
+        break;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -86,6 +97,19 @@ $live_response['likes'] = array_reverse($live_response['likes']);
 
                             $('#get_stream_info, #get_info, #get_viewers, #clear').on('click', function() {
                                 $.post('/request', {cmd: $(this).data('cmd')});
+                            });
+
+                            $(document).on('click', '.pin-comment', function() {
+                                var id = $(this).data('id');
+
+                                $.post('/request', {
+                                    cmd: 'pin',
+                                    values: [id]
+                                });
+                            });
+
+                            $(document).on('click', '#unpin-comment', function() {
+                                $.post('/request', {cmd: 'unpin'});
                             });
 
                             setInterval(function() {
@@ -150,11 +174,25 @@ HTML;
                         <ul class="list-group">
                             <?php
                             foreach ($live_response['comments'] as $comment) {
-                                echo <<<HTML
-<li class="list-group-item" data-id="{$comment['id']}">
-    {$comment['username']} : {$comment['comment']}
+                                if ($comment['pinned']) {
+                                    echo <<<HTML
+<li class="list-group-item bg-success text-light">
+    <div class="row" style="align-items:center;">
+        <span class="col-10">{$comment['username']} : {$comment['comment']}</span>
+        <a class="col-2 btn" id="unpin-comment">Unpin</a>
+    </div>
 </li>
 HTML;
+                                } else {
+                                    echo <<<HTML
+<li class="list-group-item align-middle">
+    <div class="row" style="align-items:center;">
+        <span class="col-10">{$comment['username']} : {$comment['comment']}</span>
+        <a class="col-2 btn btn-warning pin-comment" data-id="{$comment['id']}">Pin</a>
+    </div>
+</li>
+HTML;
+                                }
                             }
                             ?>
                         </ul>
