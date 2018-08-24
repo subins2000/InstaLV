@@ -126,8 +126,15 @@ function addLike($user) {
     }
 }
 
+/**
+ * Add a comment to list
+ * @param InstagramAPI\Response\Model\User    $user    User info
+ * @param InstagramAPI\Response\Model\Comment $comment Comment info
+ */
 function addComment($user, $comment) {
     global $cfg_callbacks;
+
+    var_dump($comment);
 
     $current = json_decode(@file_get_contents(__DIR__ . '/live_response'), true);
     if (!is_array($current))
@@ -136,7 +143,8 @@ function addComment($user, $comment) {
     $new = $current;
 
     $new['comments'][] = [
-        'comment'  => $comment,
+        'comment'  => $comment->getText(),
+        'id' => $comment->getPk(),
         'profile_pic_url' => $user->getProfilePicUrl(),
         'username' => $user->getUsername(),
     ];
@@ -256,8 +264,7 @@ function startHandler($ig, $broadcastId, $streamUrl, $streamKey) {
 
         foreach ($comments as $comment) {
             $user = $ig->people->getInfoById($comment->getUserId())->getUser();
-            $commentText = $comment->getText();
-            addComment($user, $commentText);
+            addComment($user, $comment);
         }
 
         // Get broadcast heartbeat and viewer count.
