@@ -151,7 +151,7 @@ HTML;
                             <?php
                             foreach ($live_response['comments'] as $comment) {
                                 echo <<<HTML
-<li class="list-group-item">
+<li class="list-group-item" data-id="{$comment['id']}">
     {$comment['username']} : {$comment['comment']}
 </li>
 HTML;
