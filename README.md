@@ -1,4 +1,4 @@
-# InstaLV ❤
+# [InstaLV](//subinsb.com/InstaLV) ❤
 
 A PHP script + webapp that allows you to go live on Instagram with any streaming program that supports RTMP!
 
@@ -18,33 +18,7 @@ Built with [mgp25's amazing Instagram Private API Wrapper for PHP](https://githu
 
 ## Setup
 
-* [Install PHP](http://php.net/downloads.php)
-* [Install Composer](https://getcomposer.org/download/)
-* Download the [latest release](https://github.com/subins2000/InstaLV/releases) or clone this repo
-* Run ```composer install``` in the downloaded/cloned folder
-* Edit the username and password inside `config.php` with your Instagram username and password
-* Run the `live.php` script :
-    ```bash
-    php live.php
-    ```
-* On another terminal, run the server :
-    ```bash
-    php -S localhost:8000 server.php
-    ```
-  You can also simply execute the `run_server.sh` or `run_server.bat` (Windows) which will run the above command.
-* Open the URL [`http://localhost:8000`](http://localhost:8000) in a browser.
-* In the InstaLV webpage, click on the button `Stream Key/URL`. Copy the Stream-URL and Stream-Key and paste them into your streaming software. [See OBS-Setup](#obs-setup)
-
-## OBS-Setup
-
-* Go to the "Stream" section of your OBS Settings
-* Set "Stream Type" to "Custom Streaming Server"
-* Set the "URL" field to the stream url you got from the script
-* Set the "Stream key" field to the stream key you got from the script
-* Make Sure "Use Authentication" is **unchecked** and press "OK"
-* Start Streaming in OBS
-* To stop streaming, run the "stop" command in your terminal and then press "Stop Streaming" in OBS
-* Note: To emulate the exact content being sent to Instagram, set your OBS canvas size to 720x1280. This can be done by going to Settings->Video and editing Base Canvas Resolution to "720x1280".
+[Read the blog post](//subinsb.com/InstaLV)
 
 ## FAQ
 
